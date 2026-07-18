@@ -9,4 +9,6 @@ backend/app/__pycache__/
 backend/.env
 
 *.pyc
+*.log
+
 .vscode/
