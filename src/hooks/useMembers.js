@@ -1,31 +1,16 @@
 import { useEffect, useState } from "react";
 
-export default function useMembers() {
-  const defaultMembers = [
-    {
-      id: 1,
-      name: "Ahmet Yılmaz",
-      apartment: "A-12",
-      phone: "05551234567",
-    },
-    {
-      id: 2,
-      name: "Ayşe Demir",
-      apartment: "B-08",
-      phone: "05557654321",
-    },
-    {
-      id: 3,
-      name: "Mehmet Kaya",
-      apartment: "C-15",
-      phone: "05559876543",
-    },
-  ];
+import {
+  getMembers,
+  createMember,
+  updateMember,
+  deleteMember,
+} from "../services/memberService";
 
-  const [members, setMembers] = useState(() => {
-    const saved = localStorage.getItem("members");
-    return saved ? JSON.parse(saved) : defaultMembers;
-  });
+
+export default function useMembers() {
+
+  const [members, setMembers] = useState([]);
 
   const [name, setName] = useState("");
   const [apartment, setApartment] = useState("");
@@ -36,11 +21,29 @@ export default function useMembers() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  useEffect(() => {
-    localStorage.setItem("members", JSON.stringify(members));
-  }, [members]);
 
-  function addMember() {
+  async function loadMembers() {
+    try {
+      const data = await getMembers();
+      setMembers(data);
+
+    } catch (error) {
+      console.error(
+        "Üyeler yüklenemedi:",
+        error.response?.data || error.message
+      );
+    }
+  }
+
+
+  useEffect(() => {
+    loadMembers();
+  }, []);
+
+
+
+  async function addMember() {
+
     if (
       name.trim() === "" ||
       apartment.trim() === "" ||
@@ -50,62 +53,114 @@ export default function useMembers() {
       return;
     }
 
-    if (isEditing) {
-      setMembers(
-        members.map((member) =>
-          member.id === editingId
-            ? {
-                ...member,
-                name,
-                apartment,
-                phone,
-              }
-            : member
-        )
+
+    const member = {
+      name: name,
+      apartment: apartment,
+      phone: phone,
+    };
+
+
+    try {
+
+      if (isEditing) {
+
+        await updateMember(
+          editingId,
+          member
+        );
+
+        setEditingId(null);
+        setIsEditing(false);
+
+      } else {
+
+        await createMember(member);
+
+      }
+
+
+      await loadMembers();
+
+
+      setName("");
+      setApartment("");
+      setPhone("");
+
+
+    } catch (error) {
+
+      console.error(
+        "ÜYE EKLEME HATASI:",
+        error.response?.data || error.message
       );
 
-      setIsEditing(false);
-      setEditingId(null);
-    } else {
-      setMembers([
-        ...members,
-        {
-          id: Date.now(),
-          name,
-          apartment,
-          phone,
-        },
-      ]);
+
+      alert(
+        JSON.stringify(
+          error.response?.data || error.message
+        )
+      );
     }
-
-    setName("");
-    setApartment("");
-    setPhone("");
   }
 
-  function deleteMember(id) {
-    setMembers(members.filter((member) => member.id !== id));
+
+
+  async function removeMember(id) {
+
+    try {
+
+      await deleteMember(id);
+
+      await loadMembers();
+
+    } catch (error) {
+
+      console.error(
+        "Silme hatası:",
+        error.response?.data || error.message
+      );
+
+    }
   }
+
+
 
   function editMember(member) {
+
     setName(member.name);
     setApartment(member.apartment);
     setPhone(member.phone);
 
     setEditingId(member.id);
     setIsEditing(true);
+
   }
 
-  const filteredMembers = members.filter((member) => {
-    const text = search.toLowerCase();
 
-    return (
-      member.name.toLowerCase().includes(text) ||
-      member.apartment.toLowerCase().includes(text)
-    );
-  });
+
+  const filteredMembers = members.filter(
+    (member) => {
+
+      const text = search.toLowerCase();
+
+      return (
+        member.name
+          .toLowerCase()
+          .includes(text)
+        ||
+        member.apartment
+          .toLowerCase()
+          .includes(text)
+      );
+
+    }
+  );
+
+
 
   return {
+
     members: filteredMembers,
 
     name,
@@ -121,9 +176,13 @@ export default function useMembers() {
     setSearch,
 
     addMember,
-    deleteMember,
+
+    deleteMember: removeMember,
+
     editMember,
 
     isEditing,
+
   };
+
 }

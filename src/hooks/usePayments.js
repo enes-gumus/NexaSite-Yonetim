@@ -1,152 +1,387 @@
 import { useEffect, useState } from "react";
 
-export default function usePayments() {
-  const [fee, setFee] = useState(500);
 
-  const defaultPayments = [
-    {
-      id: 1,
-      name: "Ahmet Yılmaz",
-      apartment: "A-12",
-      amount: 500,
-      date: "20.07.2026",
-    },
-    {
-      id: 2,
-      name: "Ayşe Demir",
-      apartment: "B-08",
-      amount: 500,
-      date: "19.07.2026",
-    },
-    {
-      id: 3,
-      name: "Mehmet Kaya",
-      apartment: "C-15",
-      amount: 500,
-      date: "18.07.2026",
-    },
-  ];
+import {
+  getPayments,
+  createPayment,
+  updatePayment,
+  deletePayment,
+} from "../services/paymentService";
 
-  const [payments, setPayments] = useState(() => {
-    const savedPayments = localStorage.getItem("payments");
 
-    return savedPayments ? JSON.parse(savedPayments) : defaultPayments;
-  });
+import {
+  getMembers
+} from "../services/memberService";
 
-  const [memberName, setMemberName] = useState("");
-  const [apartment, setApartment] = useState("");
-  const [amount, setAmount] = useState("");
 
-  const [search, setSearch] = useState("");
+import {
+  getDashboardStats
+} from "../services/dashboardService";
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingId, setEditingId] = useState(null);
 
-  useEffect(() => {
-    localStorage.setItem("payments", JSON.stringify(payments));
-  }, [payments]);
+import {
+  getSettings
+} from "../services/settingsService";
 
-  function addPayment() {
-    if (
-      memberName.trim() === "" ||
-      apartment.trim() === "" ||
-      amount.trim() === ""
-    ) {
-      alert("Lütfen tüm alanları doldurun.");
-      return;
-    }
 
-    if (isEditing) {
-      setPayments(
-        payments.map((payment) =>
-          payment.id === editingId
-            ? {
-                ...payment,
-                name: memberName,
-                apartment,
-                amount: Number(amount),
-              }
-            : payment
-        )
+
+
+
+export default function usePayments(){
+
+
+
+  const [payments,setPayments] = useState([]);
+
+  const [members,setMembers] = useState([]);
+
+
+
+  const [fee,setFee] = useState(0);
+
+
+
+  const [memberId,setMemberId] = useState("");
+
+  const [amount,setAmount] = useState("");
+
+  const [month,setMonth] = useState("");
+
+
+
+  const [isEditing,setIsEditing] = useState(false);
+
+  const [editingId,setEditingId] = useState(null);
+
+
+
+  const [error,setError] = useState("");
+
+
+
+  const [totalMembers,setTotalMembers] = useState(0);
+
+  const [paidMembers,setPaidMembers] = useState(0);
+
+  const [waitingMembers,setWaitingMembers] = useState(0);
+
+  const [totalCollected,setTotalCollected] = useState(0);
+
+
+
+
+
+
+
+
+  async function loadPayments(){
+
+    const data = await getPayments();
+
+    setPayments(data);
+
+  }
+
+
+
+
+
+
+
+  async function loadMembers(){
+
+    const data = await getMembers();
+
+    setMembers(data);
+
+  }
+
+
+
+
+
+
+
+  async function loadDashboard(){
+
+    const data = await getDashboardStats();
+
+
+    setTotalMembers(data.total_members);
+
+    setPaidMembers(data.paid_members);
+
+    setWaitingMembers(data.waiting_members);
+
+    setTotalCollected(data.total_collected);
+
+  }
+
+
+
+
+
+
+
+  async function loadSettings(){
+
+    const data = await getSettings();
+
+    setFee(Number(data.fee));
+
+  }
+
+
+
+
+
+
+
+  useEffect(()=>{
+
+
+    loadPayments();
+
+    loadMembers();
+
+    loadDashboard();
+
+    loadSettings();
+
+
+  },[]);
+
+
+
+
+
+
+
+
+
+  async function addPayment(){
+
+
+
+    setError("");
+
+
+
+    if(
+      !memberId ||
+      !amount ||
+      !month
+    ){
+
+      setError(
+        "Lütfen tüm alanları doldurun."
       );
 
-      setIsEditing(false);
-      setEditingId(null);
-    } else {
-      setPayments([
-        ...payments,
-        {
-          id: Date.now(),
-          name: memberName,
-          apartment,
-          amount: Number(amount),
-          date: new Date().toLocaleDateString("tr-TR"),
-        },
-      ]);
+      return;
+
     }
 
-    setMemberName("");
-    setApartment("");
-    setAmount("");
+
+
+
+
+
+    const payment = {
+
+      member_id:Number(memberId),
+
+      amount:Number(amount),
+
+      month
+
+    };
+
+
+
+
+
+
+
+    try{
+
+
+      if(isEditing){
+
+
+        await updatePayment(
+          editingId,
+          payment
+        );
+
+
+      }else{
+
+
+        await createPayment(
+          payment
+        );
+
+
+      }
+
+
+
+      await loadPayments();
+
+      await loadDashboard();
+
+
+
+      setMemberId("");
+
+      setAmount("");
+
+      setMonth("");
+
+      setIsEditing(false);
+
+      setEditingId(null);
+
+
+
+    }catch(error){
+
+
+      setError(
+
+        error.response?.data?.detail ||
+
+        "Ödeme işlemi başarısız."
+
+      );
+
+
+    }
+
+
+
   }
 
-  function deletePayment(id) {
-    setPayments(payments.filter((payment) => payment.id !== id));
+
+
+
+
+
+
+
+
+  async function removePayment(id){
+
+
+    await deletePayment(id);
+
+
+    await loadPayments();
+
+
+    await loadDashboard();
+
+
   }
 
-  function editPayment(payment) {
-    setMemberName(payment.name);
-    setApartment(payment.apartment);
-    setAmount(String(payment.amount));
-    setEditingId(payment.id);
-    setIsEditing(true);
-  }
 
-  const filteredPayments = payments.filter((payment) => {
-    const text = search.toLowerCase();
 
-    return (
-      payment.name.toLowerCase().includes(text) ||
-      payment.apartment.toLowerCase().includes(text)
+
+
+
+
+
+
+  function editPayment(payment){
+
+
+    setMemberId(
+      String(payment.member_id)
     );
-  });
 
-  const totalMembers = 5000;
-  const paidMembers = payments.length;
-  const waitingMembers = totalMembers - paidMembers;
 
-  const totalCollected = payments.reduce(
-    (total, payment) => total + payment.amount,
-    0
-  );
+    setAmount(
+      String(payment.amount)
+    );
+
+
+    setMonth(
+      payment.month
+    );
+
+
+    setEditingId(
+      payment.id
+    );
+
+
+    setIsEditing(true);
+
+
+  }
+
+
+
+
+
+
+
+
 
   return {
+
+
+    payments,
+
+
+    members,
+
+
     fee,
-    setFee,
 
-    memberName,
-    setMemberName,
 
-    apartment,
-    setApartment,
+
+    memberId,
+    setMemberId,
+
 
     amount,
     setAmount,
 
-    search,
-    setSearch,
 
-    payments: filteredPayments,
+    month,
+    setMonth,
 
-    totalMembers,
-    paidMembers,
-    waitingMembers,
-    totalCollected,
+
 
     addPayment,
-    deletePayment,
+
+
+    deletePayment:
+    removePayment,
+
+
+
     editPayment,
 
+
     isEditing,
+
+
+    error,
+
+
+
+    totalMembers,
+
+    paidMembers,
+
+    waitingMembers,
+
+    totalCollected
+
+
   };
+
+
 }

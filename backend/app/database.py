@@ -3,10 +3,15 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from .config import settings
 
+
 engine = create_engine(
     settings.DATABASE_URL,
     echo=True,
+    connect_args={
+        "check_same_thread": False
+    }
 )
+
 
 SessionLocal = sessionmaker(
     autocommit=False,
@@ -14,12 +19,19 @@ SessionLocal = sessionmaker(
     bind=engine,
 )
 
+
 Base = declarative_base()
 
 
+
 def get_db():
+
     db = SessionLocal()
+
     try:
+
         yield db
+
     finally:
+
         db.close()

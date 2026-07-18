@@ -1,40 +1,60 @@
-const STORAGE_KEY = "payments";
+import api from "./api";
 
-const defaultPayments = [
-  {
-    id: 1,
-    name: "Ahmet Yılmaz",
-    apartment: "A-12",
-    amount: 500,
-    date: "20.07.2026",
-  },
-  {
-    id: 2,
-    name: "Ayşe Demir",
-    apartment: "B-08",
-    amount: 500,
-    date: "19.07.2026",
-  },
-  {
-    id: 3,
-    name: "Mehmet Kaya",
-    apartment: "C-15",
-    amount: 500,
-    date: "18.07.2026",
-  },
-];
 
-export function getPayments() {
-  const data = localStorage.getItem(STORAGE_KEY);
 
-  if (!data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultPayments));
-    return defaultPayments;
-  }
+export async function getPayments(){
 
-  return JSON.parse(data);
+    const response = await api.get(
+        "/payments"
+    );
+
+    return response.data;
+
 }
 
-export function savePayments(payments) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payments));
+
+
+
+
+export async function createPayment(payment){
+
+    const response = await api.post(
+        "/payments",
+        payment
+    );
+
+    return response.data;
+
+}
+
+
+
+
+
+export async function updatePayment(
+    id,
+    payment
+){
+
+    const response = await api.put(
+        `/payments/${id}`,
+        payment
+    );
+
+    return response.data;
+
+}
+
+
+
+
+
+export async function deletePayment(id){
+
+    const response = await api.delete(
+        `/payments/${id}`
+    );
+
+    return response.data;
+
 }

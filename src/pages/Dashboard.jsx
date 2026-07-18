@@ -5,72 +5,144 @@ import SearchBar from "../components/SearchBar";
 
 import usePayments from "../hooks/usePayments";
 
+
 function Dashboard() {
+
+
   const {
+
+    payments,
+
+    members,
+
+
     fee,
-    setFee,
 
-    memberName,
-    setMemberName,
 
-    apartment,
-    setApartment,
+    memberId,
+    setMemberId,
+
 
     amount,
     setAmount,
 
+
+    month,
+    setMonth,
+
+
     search,
     setSearch,
 
-    payments,
 
     totalMembers,
     paidMembers,
     waitingMembers,
     totalCollected,
 
+
     addPayment,
     deletePayment,
     editPayment,
 
+
     isEditing,
+
+
   } = usePayments();
 
+
+
+
   return (
+
     <>
+
       <DashboardCards
+
         totalMembers={totalMembers}
+
         paidMembers={paidMembers}
+
         waitingMembers={waitingMembers}
+
         fee={fee}
+
         totalCollected={totalCollected}
+
       />
+
+
+
 
       <PaymentForm
+
+
         fee={fee}
-        setFee={setFee}
-        memberName={memberName}
-        setMemberName={setMemberName}
-        apartment={apartment}
-        setApartment={setApartment}
+
+
+        members={members}
+
+
+        memberId={memberId}
+
+        setMemberId={setMemberId}
+
+
+
         amount={amount}
+
         setAmount={setAmount}
+
+
+
+        month={month}
+
+        setMonth={setMonth}
+
+
+
         addPayment={addPayment}
+
+
+
         isEditing={isEditing}
+
+
       />
+
+
+
+
 
       <SearchBar
+
         search={search}
+
         setSearch={setSearch}
+
       />
 
+
+
+
+
       <PaymentTable
+
         payments={payments}
+
         deletePayment={deletePayment}
+
         editPayment={editPayment}
+
       />
+
+
     </>
+
   );
+
 }
+
 
 export default Dashboard;

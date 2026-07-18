@@ -1,16 +1,87 @@
-# React + Vite
+# NexaSite Yönetim
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+NexaSite Yönetim, site ve apartman yöneticilerinin aidat, üye, ödeme ve raporlama süreçlerini kolaylaştırmak amacıyla geliştirilmiş masaüstü tabanlı bir yönetim uygulamasıdır.
 
-Currently, two official plugins are available:
+Uygulama; kullanıcı doğrulama, üye takibi, ödeme yönetimi, aidat durumu kontrolü ve yönetimsel raporlama özelliklerini tek bir platform üzerinde sunar.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Özellikler
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 🔐 Kullanıcı Yönetimi
+- Güvenli kullanıcı girişi
+- Token tabanlı kimlik doğrulama
+- Oturum kapatma işlemi
 
-## Expanding the ESLint configuration
+### 👥 Üye Yönetimi
+- Site sakinlerini listeleme
+- Üye bilgilerini görüntüleme
+- Daire ve iletişim bilgilerini takip etme
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 💳 Ödeme Yönetimi
+- Aidat ödeme kayıtları
+- Ödeme geçmişi görüntüleme
+- Üye bazlı ödeme takibi
+
+### 📊 Dashboard
+- Toplam üye sayısı
+- Ödeme durumu
+- Genel site istatistikleri
+
+### 📑 Raporlama
+- Aylık aidat raporları
+- Ödeme durum analizleri
+
+### ⚙️ Ayarlar
+- Aidat tutarı yönetimi
+- Sistem ayarları
+
+---
+
+## 🛠 Kullanılan Teknolojiler
+
+### Frontend
+- React
+- Vite
+- React Router
+- Axios
+- CSS
+
+### Backend
+- Python
+- FastAPI
+- SQLAlchemy
+- SQLite
+- JWT Authentication
+
+### Masaüstü Uygulama
+- Electron
+
+---
+
+## 📂 Proje Yapısı
+NexaSite-Yonetim
+│
+├── backend
+│ ├── app
+│ ├── database
+│ └── requirements.txt
+│
+├── src
+│ ├── components
+│ ├── pages
+│ ├── services
+│ └── context
+│
+├── electron.js
+├── package.json
+└── dist
+
+---
+
+## ⚙️ Kurulum
+
+### Frontend kurulumu
+
+```bash
+npm install

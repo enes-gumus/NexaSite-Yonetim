@@ -183,3 +183,126 @@ table button:last-child {
 table button:last-child:hover {
   background-color: #c0392b;
 }
+.login-page {
+
+    height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: linear-gradient(
+        135deg,
+        #1e3c72,
+        #2a5298
+    );
+
+}
+
+
+
+.login-box {
+
+    width: 380px;
+
+    background: white;
+
+    padding: 40px;
+
+    border-radius: 20px;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+
+    text-align: center;
+
+}
+
+
+
+.login-header h1 {
+
+    font-size: 50px;
+
+    margin-bottom: 10px;
+
+}
+
+
+
+.login-header h2 {
+
+    margin: 0;
+
+    color: #1e3c72;
+
+}
+
+
+
+.login-header p {
+
+    color: #777;
+
+    margin-bottom: 30px;
+
+}
+
+
+
+
+.login-box input {
+
+
+    width: 100%;
+
+    padding: 14px;
+
+    margin-bottom: 15px;
+
+    border-radius: 10px;
+
+    border: 1px solid #ddd;
+
+    font-size: 15px;
+
+
+}
+
+
+
+
+
+.login-box button {
+
+
+    width: 100%;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #1e3c72;
+
+    color: white;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+
+}
+
+
+
+
+.login-box button:hover {
+
+
+    background: #16305c;
+
+
+}
