@@ -15,7 +15,6 @@ let backendProcess;
 
 function startBackend() {
 
-
     const backendPath = app.isPackaged
 
         ? path.join(
@@ -27,7 +26,6 @@ function startBackend() {
             __dirname,
             "backend"
         );
-
 
 
     const pythonPath = process.platform === "win32"
@@ -46,6 +44,10 @@ function startBackend() {
             "python"
         );
 
+
+    console.log("BACKEND PATH:", backendPath);
+    console.log("PYTHON PATH:", pythonPath);
+    console.log("PYTHON VAR MI:", fs.existsSync(pythonPath));
 
 
     backendProcess = spawn(
@@ -69,42 +71,29 @@ function startBackend() {
     );
 
 
-
     backendProcess.stdout.on(
         "data",
         (data)=>{
-
-            console.log(
-                `BACKEND: ${data}`
-            );
-
+            console.log(`BACKEND: ${data}`);
         }
     );
-
 
 
     backendProcess.stderr.on(
         "data",
         (data)=>{
-
-            console.log(
-                `BACKEND ERROR: ${data}`
-            );
-
+            console.log(`BACKEND ERROR: ${data}`);
         }
     );
-
 
 
     backendProcess.on(
         "error",
         (error)=>{
-
             console.log(
                 "BACKEND START ERROR:",
                 error
             );
-
         }
     );
 
@@ -116,16 +105,17 @@ function startBackend() {
 
 function createWindow(){
 
-
     const win = new BrowserWindow({
 
         width:1200,
 
         height:800,
 
-        webPreferences: {
+        webPreferences:{
 
-            nodeIntegration:false
+            nodeIntegration:false,
+
+            contextIsolation:true
 
         }
 
@@ -133,25 +123,43 @@ function createWindow(){
 
 
 
-    const indexPath = app.isPackaged
+    let indexPath;
 
-        ? path.join(
+
+    if(app.isPackaged){
+
+        indexPath = path.join(
+
             process.resourcesPath,
-            "app.asar",
-            "dist",
-            "index.html"
-        )
 
-        : path.join(
-            __dirname,
+            "app.asar",
+
             "dist",
+
             "index.html"
+
         );
+
+    }
+
+    else{
+
+        indexPath = path.join(
+
+            __dirname,
+
+            "dist",
+
+            "index.html"
+
+        );
+
+    }
 
 
 
     console.log(
-        "Açılacak dosya:",
+        "INDEX PATH:",
         indexPath
     );
 
@@ -193,18 +201,15 @@ app.whenReady().then(()=>{
     startBackend();
 
 
-
     setTimeout(()=>{
 
-
         createWindow();
-
 
     },3000);
 
 
-
 });
+
 
 
 
@@ -222,6 +227,8 @@ app.on(
 
             backendProcess.kill();
 
+            backendProcess = null;
+
         }
 
 
@@ -231,7 +238,6 @@ app.on(
             app.quit();
 
         }
-
 
     }
 

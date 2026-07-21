@@ -1,5 +1,5 @@
 {
-  "name": "aidat_yonetim_sistemi",
+  "name": "nexasite-yonetim",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -39,14 +39,18 @@
   "build": {
     "appId": "com.nexasite.yonetim",
     "productName": "NexaSite Yönetim",
+"files": [
+  "dist/**/*",
+  "electron.js",
+  "package.json"
+],
 
-    "files": [
-      "**/*",
-      "!backend/venv/**",
-      "!backend_yedek/venv/**",
-      "!backend_final_yedek/venv/**",
-      "!node_modules/**/venv/**"
-    ],
+"extraResources": [
+  {
+    "from": "backend",
+    "to": "backend"
+  }
+],
 
     "linux": {
       "target": [
