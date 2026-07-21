@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import { spawn } from "child_process";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 
 
@@ -29,10 +30,21 @@ function startBackend() {
 
 
 
-    const pythonPath = path.join(
-        backendPath,
-        "venv/bin/python"
-    );
+    const pythonPath = process.platform === "win32"
+
+        ? path.join(
+            backendPath,
+            "venv",
+            "Scripts",
+            "python.exe"
+        )
+
+        : path.join(
+            backendPath,
+            "venv",
+            "bin",
+            "python"
+        );
 
 
 
@@ -59,9 +71,7 @@ function startBackend() {
 
 
     backendProcess.stdout.on(
-
         "data",
-
         (data)=>{
 
             console.log(
@@ -69,15 +79,12 @@ function startBackend() {
             );
 
         }
-
     );
 
 
 
     backendProcess.stderr.on(
-
         "data",
-
         (data)=>{
 
             console.log(
@@ -85,14 +92,12 @@ function startBackend() {
             );
 
         }
-
     );
 
 
+
     backendProcess.on(
-
         "error",
-
         (error)=>{
 
             console.log(
@@ -101,10 +106,10 @@ function startBackend() {
             );
 
         }
-
     );
 
 }
+
 
 
 
@@ -148,6 +153,12 @@ function createWindow(){
     console.log(
         "Açılacak dosya:",
         indexPath
+    );
+
+
+    console.log(
+        "DOSYA VAR MI:",
+        fs.existsSync(indexPath)
     );
 
 
